@@ -9,31 +9,42 @@ const refs = {
 refs.form.addEventListener('submit', onSumbit);
 refs.form.addEventListener('input', throttle(onInput, 500));
 
-function onSumbit(e) {
-  e.preventDefault();
-  consoleFormData(e.currentTarget);
-  e.currentTarget.reset();
-  localStorage.removeItem('email');
-  localStorage.removeItem('message');
-}
+const formData = {};
 
 function onInput(e) {
-  if (e.target.name === 'email') localStorage.setItem('email', e.target.value);
-  if (e.target.name === 'message')
-    localStorage.setItem('message', e.target.value);
+  // if (e.target.name === 'email') localStorage.setItem('email', e.target.value);
+  // if (e.target.name === 'message')
+  //   localStorage.setItem('message', e.target.value);
+  formData[e.target.name] = e.target.value;
+  localStorage.setItem('feedback-form-state', JSON.stringify(formData));
 }
 
-function getLocalStorageItems(e) {
-  if (localStorage.getItem('email')) {
-    refs.email.value = localStorage.getItem('email');
-  }
-  if (localStorage.getItem('message')) {
-    refs.message.value = localStorage.getItem('message');
-  }
+function onSumbit(e) {
+  console.log(JSON.parse(localStorage.getItem('feedback-form-state')));
+  e.preventDefault();
+  e.currentTarget.reset();
+  localStorage.removeItem('feedback-form-state');
 }
 
-function consoleFormData(form) {
-  const feedbackData = {};
-  new FormData(form).forEach((value, key) => (feedbackData[key] = value));
-  console.log('feedbackData', feedbackData);
-}
+// function getLocalStorageItems(e) {
+//   // if (localStorage.getItem('email')) {
+//   //   refs.email.value = localStorage.getItem('email');
+//   // }
+//   // if (localStorage.getItem('message')) {
+//   //   refs.message.value = localStorage.getItem('message');
+//   // }
+// }
+
+// function consoleFormData(form) {
+//   const feedbackData = {};
+//   new FormData(form).forEach((value, key) => (feedbackData[key] = value));
+//   console.log('feedbackData', feedbackData);
+// }
+
+(function dataFromLocalStorage() {
+  const data = JSON.parse(localStorage.getItem('feedback-form-state'));
+  if (data) {
+    refs.email.value = data.email;
+    refs.message.value = data.message;
+  }
+})();
