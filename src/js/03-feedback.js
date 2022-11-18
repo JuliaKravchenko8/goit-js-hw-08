@@ -9,42 +9,30 @@ const refs = {
 refs.form.addEventListener('submit', onSumbit);
 refs.form.addEventListener('input', throttle(onInput, 500));
 
-const formData = {};
+const STORAGE_KEY = 'feedback-form-state';
+let formData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+populateData();
 
 function onInput(e) {
-  // if (e.target.name === 'email') localStorage.setItem('email', e.target.value);
-  // if (e.target.name === 'message')
-  //   localStorage.setItem('message', e.target.value);
   formData[e.target.name] = e.target.value;
-  localStorage.setItem('feedback-form-state', JSON.stringify(formData));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 }
 
 function onSumbit(e) {
-  console.log(JSON.parse(localStorage.getItem('feedback-form-state')));
   e.preventDefault();
+  console.log(JSON.parse(localStorage.getItem(STORAGE_KEY)));
+
   e.currentTarget.reset();
-  localStorage.removeItem('feedback-form-state');
+  localStorage.removeItem(STORAGE_KEY);
+  formData = {};
 }
-
-// function getLocalStorageItems(e) {
-//   // if (localStorage.getItem('email')) {
-//   //   refs.email.value = localStorage.getItem('email');
-//   // }
-//   // if (localStorage.getItem('message')) {
-//   //   refs.message.value = localStorage.getItem('message');
-//   // }
-// }
-
-// function consoleFormData(form) {
-//   const feedbackData = {};
-//   new FormData(form).forEach((value, key) => (feedbackData[key] = value));
-//   console.log('feedbackData', feedbackData);
-// }
-
-(function dataFromLocalStorage() {
-  const data = JSON.parse(localStorage.getItem('feedback-form-state'));
-  if (data) {
-    refs.email.value = data.email;
-    refs.message.value = data.message;
+function populateData() {
+  const storageItem = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  console.log('storageItem', storageItem);
+  console.log(storageItem);
+  if (storageItem) {
+    refs.email.value = storageItem.email || '';
+    refs.message.value = storageItem.message || '';
   }
-})();
+}
