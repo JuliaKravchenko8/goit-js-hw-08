@@ -6,33 +6,43 @@ const refs = {
   message: document.querySelector('textarea[name="message"]'),
 };
 
-refs.form.addEventListener('submit', onSumbit);
+refs.form.addEventListener('submit', onFormSumbit);
 refs.form.addEventListener('input', throttle(onInput, 500));
 
-const STORAGE_KEY = 'feedback-form-state';
-let formData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+const STORAGE_KEY = 'formData';
+const formData = {};
 
-populateData();
+getLocalStorageItems();
+
+function onFormSumbit(e) {
+  e.preventDefault();
+
+  consoleFormData(e.currentTarget);
+  e.currentTarget.reset();
+  localStorage.removeItem(STORAGE_KEY);
+}
 
 function onInput(e) {
   formData[e.target.name] = e.target.value;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+
+  localStorage.setItem('formData', JSON.stringify(formData));
 }
 
-function onSumbit(e) {
-  e.preventDefault();
-  console.log(JSON.parse(localStorage.getItem(STORAGE_KEY)));
-
-  e.currentTarget.reset();
-  localStorage.removeItem(STORAGE_KEY);
-  formData = {};
-}
-function populateData() {
+function getLocalStorageItems() {
   const storageItem = JSON.parse(localStorage.getItem(STORAGE_KEY));
   console.log('storageItem', storageItem);
-  console.log(storageItem);
-  if (storageItem) {
-    refs.email.value = storageItem.email || '';
-    refs.message.value = storageItem.message || '';
-  }
+
+  if (!storageItem) return;
+
+  Object.keys(storageItem).forEach(key => {
+    const element = refs.form.querySelector(`[name="${key}"]`);
+    element.value = storageItem[key];
+  });
+}
+
+function consoleFormData(form) {
+  const feedbackData = {};
+
+  new FormData(form).forEach((value, key) => (feedbackData[key] = value));
+  console.log('feedbackData', feedbackData);
 }
