@@ -19,7 +19,7 @@ function onFormSumbit(e) {
 
   e.currentTarget.reset();
   localStorage.removeItem(STORAGE_KEY);
-  // formData = {};
+  formData = {};
 }
 
 function onInput(e) {
