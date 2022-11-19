@@ -15,11 +15,16 @@ getLocalStorageItems();
 function onFormSumbit(e) {
   e.preventDefault();
 
-  console.log(JSON.parse(localStorage.getItem(STORAGE_KEY)));
+  if (e.target.elements.email.value && e.target.elements.message.value) {
+    // consoleFormData(e.currentTarget);
+    console.log(JSON.parse(localStorage.getItem(STORAGE_KEY)));
 
-  e.currentTarget.reset();
-  localStorage.removeItem(STORAGE_KEY);
-  formData = {};
+    e.currentTarget.reset();
+    localStorage.removeItem(STORAGE_KEY);
+    formData = {};
+  } else {
+    alert('заповни всі поля форми!');
+  }
 }
 
 function onInput(e) {
